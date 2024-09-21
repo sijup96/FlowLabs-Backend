@@ -1,31 +1,35 @@
 import { CompanyEntity } from "../../entity/company.entity";
 import { OtpEntities } from '../../entity/otp.entity';
 import { generateOtpCode } from "../../frameworks/services/generateOtp.service";
-import { ICompanySignUp } from "../../interface/company/ICompany.signUp";
+import { ICompanyGoogleSignUp, ICompanySignUpOtp, ICompanySignUpUseCase } from "../../interface/company/ICompany.signUp";
 import { IOtpRepository } from "../../interface/company/IOtp.repository";
 import { ValidationError } from "../../shared/utils/customError";
 import bcrypt from 'bcrypt';
 import { EmailService } from '../../frameworks/services/email.service';
 import ICompanyRepository from "../../interface/company/ICompany.repository";
+import slugify from "slugify";
+import { SIGNUP_EMAIL_BODY } from "../../shared/constants";
+import { GoogleService } from "../../frameworks/services/google.service";
 
 
-export class CompanySignUpUseCase {
+export class CompanySignUpUseCase implements ICompanySignUpUseCase {
 
     constructor(
         private otpRepository: IOtpRepository,
         private companyRepository: ICompanyRepository,
-        private emailservice: EmailService
+        private emailService: EmailService,
+        private googleService: GoogleService
     ) {
         this.otpRepository = otpRepository;
         this.companyRepository = companyRepository;
     }
-    public async generateOtp(data:{email:string}): Promise<void> {
+    public async generateOtp(data: { email: string }): Promise<void> {
         try {
-            const {email} = data;
+            const { email } = data;
             const otpCode = generateOtpCode()
             const otp = new OtpEntities(email, otpCode)
             await this.otpRepository.saveOtp(otp);
-            await this.emailservice.sendMail({
+            await this.emailService.sendMail({
                 to: email,
                 subject: 'Flow Labs OTP',
                 body: ` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
@@ -51,28 +55,83 @@ export class CompanySignUpUseCase {
         }
         return false;
     }
-    async signUp(reqBody: ICompanySignUp): Promise<void> {
+    async signUp(reqBody: ICompanySignUpOtp): Promise<void> {
         try {
-            const { firstName, lastName, email, companyName, password, phone, otp } = reqBody;
+            const { companyName, industry, phone, email, password, otp } = reqBody;
             const errorObject: { [key: string]: string } = {};
-            const existingUser = await this.companyRepository.findByEmail(email);
-            if (existingUser) errorObject.emailError = 'Company already exists.';
+
+            // Check for existing company
+            const existingCompany = await this.companyRepository.isExistingCompany(companyName);
+            if (existingCompany) {
+                errorObject.companyNameError = 'Company already exists';
+            }
+
+            // Verify OTP
             const isOtpVerified = await this.otpRepository.verifyOtp(email, otp);
+            if (!isOtpVerified) {
+                errorObject.otpError = 'OTP verification failed.';
+            }
 
-            if (!isOtpVerified) errorObject.otpError = 'OTP verification failed.';
-            if (Object.keys(errorObject).length > 0) throw new ValidationError('Validation Error', errorObject, 400);
-
+            // Log errors and throw validation error if any
+            if (Object.keys(errorObject).length > 0) {
+                throw new ValidationError('Validation Error', errorObject, 400);
+            }
+            // Hash password
             const hashedPassword = await bcrypt.hash(password, 10);
-            const userData = new CompanyEntity(
-                firstName,
-                lastName,
-                phone,
+            const companySlug = slugify(companyName, { lower: true });
+            // Create company data
+            const companyData = new CompanyEntity(
                 companyName,
+                companySlug,
+                industry,
+                phone,
                 email,
-                hashedPassword
+                hashedPassword,
             );
-            const newUser = await this.companyRepository.save(userData)
-            console.log('newUser', newUser);
+            // Save the new company
+            const newCompany = await this.companyRepository.save(companyData);
+            // Send welcome email
+            await this.emailService.sendMail({
+                to: email,
+                subject: 'Welcome to FlowLabs! Your Login Link',
+                body: SIGNUP_EMAIL_BODY('google')
+            });
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async googleAuth(signUpData: ICompanyGoogleSignUp): Promise<void> {
+        try {
+            const { companyName, industry, phone, tokenResponse } = signUpData
+            const errorObject: { [key: string]: string } = {};
+            // Check for existing company
+            const existingCompany = await this.companyRepository.isExistingCompany(companyName);
+            if (existingCompany) {
+                errorObject.companyNameError = 'Company already exists';
+            }
+            const userData = await this.googleService.verifyGoogleToken(tokenResponse.access_token)
+            const email = userData?.email || ''
+            if (Object.keys(errorObject).length > 0) {
+                throw new ValidationError('Validation Error', errorObject, 400);
+            }
+            const companySlug = slugify(companyName, { lower: true });
+            const companyData = new CompanyEntity(
+                companyName,
+                companySlug,
+                industry,
+                phone,
+                email,
+            );
+            // Save the new company
+            const newCompany = await this.companyRepository.save(companyData);
+            // Send welcome email
+            await this.emailService.sendMail({
+                to: email,
+                subject: 'Welcome to FlowLabs! Your Login Link',
+                body: SIGNUP_EMAIL_BODY('google')
+            });
         } catch (error) {
             throw error
         }

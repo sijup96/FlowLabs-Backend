@@ -2,23 +2,23 @@ import { Document, Schema, model } from 'mongoose';
 import { ICompanyDocument } from '../../../interface/company/ICompany.document';
 import bcrypt from 'bcrypt'
 
-const CompanySchema: Schema<ICompanyDocument> = new Schema({
-    firstName: {
+export const CompanySchema: Schema<ICompanyDocument> = new Schema({
+    companyName: {
         type: String,
         required: true,
         trim: true,
     },
-    lastName: {
+    companySlug: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    industry: {
         type: String,
         required: true,
         trim: true,
     },
     phone: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    companyName: {
         type: String,
         required: true,
         trim: true,
@@ -29,13 +29,19 @@ const CompanySchema: Schema<ICompanyDocument> = new Schema({
         lowercase: true,
         trim: true,
     },
-    password: {
-        type: String,
-        required: true,
+    Password:{
+        type:String,
     },
-    domain: {
+    logo: {
         type: String,
         trim: true,
+    },
+    description:{
+        type:String,
+        trim:true,
+    },
+    foundedDate:{
+        type:Date,
     },
     orderNo: {
         type: String,

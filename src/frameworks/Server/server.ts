@@ -4,6 +4,7 @@ import { ORIGIN_URL } from '../../shared/constants';
 import morgan from 'morgan';
 import { envConfig } from '../../shared/config/env.config';
 import indexRouter from '../routes/index.router'
+import { errorHandler } from '../middleware/error.handler.middleware';
 
 export const createServer = async () => {
     try {
@@ -16,6 +17,7 @@ export const createServer = async () => {
         app.use(urlencoded({ extended: true }));
         app.use(express.json());
         app.use('/',indexRouter)
+        app.use(errorHandler)
         app.listen(envConfig.PORT,()=>console.log(`server running on port ${envConfig.PORT}`))
     } catch (error) {
         console.log(error)

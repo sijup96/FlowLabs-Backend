@@ -2,13 +2,15 @@ import { Document } from "mongoose";
 import { CompanyEntity } from "../../entity/company.entity";
 
 export interface ICompanyDocument extends Document{
-    firstName: string;
-    lastName: string;
-    phone: string;
     companyName: string;
+    companySlug:string;
+    industry: string;
+    phone: string;
     email: string;
-    password: string;
-    domain?: string;
+    Password?:string;
+    logo?: string;
+    description?:string;
+    foundedDate?:Date;
     orderNo?: string;
     orderDate?: Date;
     plan?: string;
