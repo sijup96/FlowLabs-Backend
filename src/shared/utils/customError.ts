@@ -7,7 +7,6 @@ export class ValidationError extends Error {
         this.name = 'ValidationError';
         this.statusCode = statusCode;
         this.errorObject = errorObject;
-
         Error.captureStackTrace(this, this.constructor);
     }
 }

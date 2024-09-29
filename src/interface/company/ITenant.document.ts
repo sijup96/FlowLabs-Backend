@@ -1,4 +1,5 @@
 export interface ITenantDocument extends Document {
-    domain: string;
-    tenantId: string;
-  }
+  email: string;
+  dbName: string;
+  password: string;
+}

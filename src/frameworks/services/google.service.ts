@@ -2,7 +2,6 @@ import { OAuth2Client } from "google-auth-library";
 import { IGoogleUser } from "../../interface/company/ICompany.signUp";
 import { envConfig } from "../../shared/config/env.config";
 import axios from 'axios'
-import { EMAIL_USER_INFO_URI } from "../../shared/constants";
 
 export class GoogleService {
     private client: OAuth2Client
@@ -11,7 +10,7 @@ export class GoogleService {
     }
     async verifyGoogleToken(token: string): Promise<IGoogleUser | null> {
         try {
-            const response=await axios.get(EMAIL_USER_INFO_URI,{
+            const response=await axios.get(envConfig.EMAIL_USER_INFO_URI,{
                 headers:{
                     Authorization:`Bearer ${token}`,
                 }

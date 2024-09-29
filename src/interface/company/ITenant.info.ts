@@ -1,4 +1,4 @@
-export interface ITenantInfo{
-    tenantId:string,
-    domain:string
+export interface ITenantInfo {
+  email: string;
+  password: string;
 }

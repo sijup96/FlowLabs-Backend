@@ -1,21 +1,26 @@
 import { CompanyEntity } from "../../entity/company.entity";
 
 export interface ICompanySignUpOtp extends CompanyEntity {
-    password: string;
-    otp: string;
+  password: string;
+  otp: string;
 }
 export interface ICompanySignUpUseCase {
-    generateOtp(data: { email: string }): Promise<void>;
-    signUp(signUpData: CompanyEntity): Promise<void>;
-    googleAuth(signUpData: CompanyEntity): Promise<void>;
+  generateOtp(data: { email: string }): Promise<void>;
+  signUp(signUpData: CompanyEntity): Promise<void>;
+  googleAuth(signUpData: CompanyEntity): Promise<void>;
 }
 export interface ICompanyGoogleSignUp extends CompanyEntity {
-    isGoogleSignUp: boolean;
-    tokenResponse: {
-        access_token: string;
-    }
+  isGoogleSignUp: boolean;
+  tokenResponse: {
+    access_token: string;
+  };
 }
 export interface IGoogleUser {
-    email: string;
-    name?: string;
+  email: string;
+  name?: string;
+  sub?: string;
+  given_name?: string;
+  family_name?: string;
+  picture?: string;
+  email_verified?: boolean;
 }
