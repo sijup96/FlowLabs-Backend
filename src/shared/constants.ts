@@ -14,7 +14,6 @@ export const SIGNUP_EMAIL_BODY = (domainName: string) => {
 </div>
 `;
 };
-
 export const APPROVED_EMAIL_BODY = (
   companySlug: string,
   companyName: string,
@@ -59,21 +58,25 @@ export const DECLINE_EMAIL_BODY = (companyName: string) => {
 </div>
   `;
 };
-
 export const ROLE = {
   admin: "admin",
   hr: "hr",
   employee: "employee",
   company: "company",
 };
-
-export const COLLECTION_NAME={
-  company:'companydatas',
-  admin:'credentials'
-}
-export const TOKEN_NAME={
-  company:'companyJWT',
-  admin:'adminJWT',
-  employee:'employeeJWT',
-  refreshToken:'refreshToken'
-}
+export const COLLECTION_NAME = {
+  company: "companydatas",
+  employees:'employeedetails',
+  admin: "credentials",
+};
+export const TOKEN_NAME = {
+  companyRefreshToken: "companyRefreshToken",
+  companyAccessToken: "companyAccessToken",
+  hrRefreshToken: "hrRefreshToken",
+  hrAccessToken: "hrAccessToken",
+  employeeRefreshToken: "employeeRefreshToken",
+  employeeAccessToken: "employeeAccessToken",
+  adminRefreshToken: "adminRefreshToken",
+  adminAccessToken: "adminAccessToken",
+};
+export const S3_BUCKET_IMAGE_URL='https://flowlabsbucket.s3.ap-south-1.amazonaws.com'

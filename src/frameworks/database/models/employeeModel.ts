@@ -1,9 +1,13 @@
 import mongoose, { Schema } from 'mongoose';
+import { IEmployeeDocument } from '../../../interface/employee/I_employeeDocument';
 
 // User Schema
-export const UserSchema = new Schema(
+export const EmployeeSchema = new Schema(
   {
-    name: {
+    firstName: {
+      type: String,
+    },
+    lastName: {
       type: String,
     },
     gender: {
@@ -79,5 +83,5 @@ export const UserSchema = new Schema(
   },
 );
 
-const User = mongoose.model('User', UserSchema);
-export default User;
+const EmployeeModel = mongoose.model<IEmployeeDocument>('Employee', EmployeeSchema);
+export default EmployeeModel;

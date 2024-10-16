@@ -2,7 +2,7 @@ import { Model, Connection } from "mongoose";
 import { ITenantDocument } from "../../interface/company/ITenant.document";
 import { ITenantInfo } from "../../interface/company/ITenant.info";
 import { CompanySchema } from "../database/models/company.model";
-import { UserSchema } from "../database/models/userModel";
+import { UserSchema } from "../database/models/employeeModel";
 
 export class TenantService {
     constructor(private tenantModel: Model<ITenantDocument>, private connection: Connection) {}

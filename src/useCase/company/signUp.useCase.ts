@@ -7,7 +7,7 @@ import {
   ICompanySignUpUseCase,
 } from "../../interface/company/ICompany.signUp";
 import { IOtpRepository } from "../../interface/company/IOtp.repository";
-import { ValidationError } from "../../shared/utils/customError";
+import { CustomError } from "../../shared/utils/customError";
 import bcrypt from "bcrypt";
 import { EmailService } from "../../frameworks/services/email.service";
 import slugify from "slugify";
@@ -81,7 +81,8 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
 
       // Log errors and throw validation error if any
       if (Object.keys(errorObject).length > 0) {
-        throw new ValidationError("Validation Error", errorObject, 400);
+        throw new CustomError("Validation Error", errorObject, 400);
+        return
       }
       // Hash password
       const password = await bcrypt.hash(defaultPassword, 10);
@@ -96,7 +97,7 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
         password
       );
       // Save the new company
-      const newCompany = await this.companyRepository.save(companyData);
+       await this.companyRepository.save(companyData);
       // Send welcome email
       await this.emailService.sendMail({
         to: email,
@@ -129,7 +130,7 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
       const logo = userData?.picture;
 
       if (Object.keys(errorObject).length > 0) {
-        throw new ValidationError("Validation Error", errorObject, 400);
+        throw new CustomError("Validation Error", errorObject, 400);
       }
       // Hash password
       const password = await bcrypt.hash(defaultPassword, 10);

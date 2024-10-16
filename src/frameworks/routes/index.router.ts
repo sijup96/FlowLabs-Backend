@@ -23,7 +23,7 @@ const companyRepository = new CompanyRepository(companyDbService);
 // Services
 const emailService = new EmailService();
 const googleService = new GoogleService();
-const jwtService=new JwtService()
+const jwtService = new JwtService();
 // UseCases
 const companySignUpUseCase = new CompanySignUpUseCase(
   otpRepository,
@@ -34,7 +34,7 @@ const companySignUpUseCase = new CompanySignUpUseCase(
 // Controllers
 const companyAuthController = new CompanyAuthController(companySignUpUseCase);
 // Middlewares
-const authMiddleware=new AuthMiddleware(jwtService)
+const authMiddleware = new AuthMiddleware(jwtService);
 
 router.post(
   "/otp",
@@ -48,6 +48,16 @@ router.post(
   "/googleAuth",
   companyAuthController.companyGoogleSignUp.bind(companyAuthController)
 );
-router.post('/refreshToken',authMiddleware.validateToken.bind(authMiddleware))
+router.post(
+  "/getAdminAccessToken",
+  authMiddleware.getAdminAccessToken.bind(authMiddleware)
+);
+router.post("/getEmployeeAccessToken");
+router.post("/getComanyAccessToken");
+router.post(
+  "/getHrAccessToken",
+  authMiddleware.getHrAccessToken.bind(authMiddleware)
+);
+router.get("/getDomainName", authMiddleware.getDomainName.bind(authMiddleware));
 
 export default router;

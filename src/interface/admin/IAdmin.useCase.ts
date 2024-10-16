@@ -6,7 +6,7 @@ export interface IRequestApprovelProps {
 }
 
 export interface IAdminUseCase {
-  login(loginCredentials: IAdminLoginCredentials): Promise<string>;
+  login(loginCredentials: IAdminLoginCredentials): Promise<{refreshToken:string,accessToken:string}>;
   getUserRequests(): Promise<Record<string, unknown[]> | null>;
   requestApproval(body: IRequestApprovelProps): Promise<void>;
 }

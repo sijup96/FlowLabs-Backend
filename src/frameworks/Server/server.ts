@@ -7,6 +7,7 @@ import { errorHandler } from "../middleware/error.handler.middleware";
 import adminRouter from "../routes/admin.router";
 import cookieParser from "cookie-parser";
 import companyRouter from "../routes/company.router";
+import employeeRouter from "../routes/employee.router";
 
 export const createServer = async () => {
   try {
@@ -15,15 +16,17 @@ export const createServer = async () => {
       cors({
         origin: envConfig.ORIGIN_URL,
         credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
       })
     );
     app.use(morgan("dev"));
-    app.use(urlencoded({ extended: true }));
+    app.use(urlencoded({ limit: "50mb", extended: true }));
     app.use(cookieParser());
-    app.use(express.json());
+    app.use(express.json({ limit: "50mb" }));
     app.use("/", indexRouter);
     app.use("/admin", adminRouter);
-    app.use("/:domainName/", companyRouter);
+    app.use("/company", companyRouter);
+    app.use("/employee", employeeRouter);
     app.use(errorHandler);
     app.listen(envConfig.PORT, () =>
       console.log(`server running on port ${envConfig.PORT}`)

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { ValidationError } from "../../shared/utils/customError";
+import { CustomError } from "../../shared/utils/customError";
 
 export const errorHandler =(err: Error, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof ValidationError) {
+    if (err instanceof CustomError) {
         return res.status(err.statusCode).json({
             message: err.message,
             errors: err.errorObject,

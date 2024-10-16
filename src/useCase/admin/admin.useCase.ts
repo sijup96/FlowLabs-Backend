@@ -31,16 +31,18 @@ export class AdminUseCase implements IAdminUseCase {
   }
   public async login(
     loginCredentials: IAdminLoginCredentials
-  ): Promise<string> {
+  ): Promise<{refreshToken:string,accessToken:string}> {
     try {
       const { email, password } = loginCredentials;
       const admin = await this.adminRepository.verifyAdmin(email, password);
-      const token = await this.jwtService.generateRefreshToken(
-        admin._id,
-        admin.email,
-        ROLE.admin
-      );
-      return token;
+      const data={
+        userId:admin._id,
+        email:admin.email,
+        role:ROLE.admin,
+      }
+      const refreshToken = await this.jwtService.generateRefreshToken(data);
+      const accessToken=await this.jwtService.generateAccessToken(data)
+      return {refreshToken:refreshToken,accessToken:accessToken};
     } catch (error) {
       throw error;
     }

@@ -1,4 +1,4 @@
-export class ValidationError extends Error {
+export class CustomError extends Error {
     public statusCode: number;
     public errorObject: { [key: string]: string };
 

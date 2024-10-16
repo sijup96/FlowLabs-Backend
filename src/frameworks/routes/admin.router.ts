@@ -40,7 +40,7 @@ const authMiddleware = new AuthMiddleware(jwtService);
 router.post("/login", adminAuthController.adminLogin.bind(adminAuthController));
 router.get(
   "/userRequests",
-  authMiddleware.authenticateAdmin.bind(authMiddleware),
+  authMiddleware.isAdmin.bind(authMiddleware),
   adminAuthController.getUserRequests.bind(adminAuthController)
 );
 router.post(
