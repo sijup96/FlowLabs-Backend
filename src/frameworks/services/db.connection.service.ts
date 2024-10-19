@@ -3,6 +3,7 @@ import { envConfig } from "../../shared/config/env.config";
 import slugify from "slugify";
 import { CompanyModel } from "../database/models/company.model";
 import { ICompanyDbService } from "../../interface/service/I_dbService";
+import { ICompanyDocument } from "../../interface/company/ICompany.document";
 
 export class CompanyDbService implements ICompanyDbService {
   // Establish a connection to a company's database
@@ -19,6 +20,7 @@ export class CompanyDbService implements ICompanyDbService {
       });
       return connection;
     } catch (error) {
+      console.log(error)
       return null;
     }
   }
@@ -72,10 +74,11 @@ export class AdminDbService {
       });
       return connection;
     } catch (error) {
+      console.log(error)
       return null;
     }
   }
-  public async getAllCompanies(): Promise<Record<string, any[]> | null> {
+  public async getAllCompanies(): Promise<Record<string, ICompanyDocument[]> | null> {
     try {
       // Connect to the admin database to list all company databases
       const adminConnection = mongoose.createConnection(
@@ -107,7 +110,7 @@ export class AdminDbService {
         console.error("No company databases found");
         return null;
       }
-      const allCompanies: Record<string, any[]> = {}; // To store companies by db name
+      const allCompanies: Record<string, ICompanyDocument[]> = {}; // To store companies by db name
       // Iterate through each company database
       for (const dbName of companyDbs) {
         const companyConnection = mongoose.createConnection(
@@ -154,6 +157,7 @@ export class AdminDbService {
       await connection.dropDatabase();
       return true;
     } catch (error) {
+      console.log(error)
       return false;
     }
   }

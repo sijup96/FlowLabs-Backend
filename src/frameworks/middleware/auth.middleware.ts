@@ -65,7 +65,7 @@ export class AuthMiddleware {
         );
       const decoded = await this.jwtService.verifyJwtToken(accessToken);
       if (decoded.role === ROLE.hr){
-        req.user=decoded
+        req.user=decoded as IPayload
         next();
       } 
       else
@@ -108,8 +108,8 @@ export class AuthMiddleware {
         maxAge: 15 * 60 * 1000, // 15 minutes
       });
       return res.status(200).json({ domain: decoded.domainName });
-    } catch (error:any) {
-      if (error.name === "TokenExpiredError") {
+    } catch (error) {
+      if ((error as Error).name === "TokenExpiredError") {
         // Handle token expiration
         return next(
           new CustomError(

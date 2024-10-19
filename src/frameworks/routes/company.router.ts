@@ -7,6 +7,9 @@ import { JwtService } from "../services/jwt.service";
 import { AuthMiddleware } from "../middleware/auth.middleware";
 import multer from "multer";
 import { AwsS3Bucket } from "../services/awsS3Service.service";
+import { DepartmentController } from "../../adapters/controllers/company/department.controller";
+import { DepartmentUseCase } from "../../useCase/company/department.useCase";
+import { DepartmentRepository } from "../../adapters/repositories/company/department.repository";
 
 const router = express.Router();
 // Multer
@@ -15,9 +18,10 @@ const upload = multer({ storage });
 // Service
 const companyDbService = new CompanyDbService();
 const jwtService = new JwtService();
-const s3Bucket=new AwsS3Bucket()
+const s3Bucket = new AwsS3Bucket();
 // Repository
 const companyRepository = new CompanyRepository(companyDbService);
+const departmentRepository = new DepartmentRepository();
 // UseCase
 const companyUseCase = new CompanyUseCase(
   companyDbService,
@@ -25,17 +29,23 @@ const companyUseCase = new CompanyUseCase(
   jwtService,
   s3Bucket
 );
+const departmentUseCase = new DepartmentUseCase(
+  companyDbService,
+  departmentRepository
+);
 // Middleware
 const authMiddleware = new AuthMiddleware(jwtService);
 // Controller
 const companyController = new CompanyController(companyUseCase, jwtService);
+const departmentController = new DepartmentController(departmentUseCase);
 
 router.post("/login", companyController.login.bind(companyController));
 router.put(
-  "/resetPassword",authMiddleware.isHR.bind(authMiddleware),
+  "/resetPassword",
+  authMiddleware.isHR.bind(authMiddleware),
   companyController.companyPasswordReset.bind(companyController)
 );
-router.get( 
+router.get(
   "/getCompanyInfo",
   authMiddleware.isHR.bind(authMiddleware),
   companyController.getCompanyInfo.bind(companyController)
@@ -51,5 +61,27 @@ router.post(
   authMiddleware.isHR.bind(authMiddleware),
   upload.single("company_logo"),
   companyController.uploadLogo.bind(companyController)
+);
+
+// Department
+router.post(
+  "/addDepartment",
+  authMiddleware.isHR.bind(authMiddleware),
+  departmentController.addDepartment.bind(departmentController)
+);
+router.get(
+  "/getAllDepartments",
+  authMiddleware.isHR.bind(authMiddleware),
+  departmentController.getAllDepartment.bind(departmentController)
+);
+router.get(
+  "/getDepartmentInfo",
+  authMiddleware.isHR.bind(authMiddleware),
+  departmentController.getDepartmentInfo.bind(departmentController)
+);
+router.put(
+  "/updateDepartment",
+  authMiddleware.isHR.bind(authMiddleware),
+  departmentController.updateDepartment.bind(departmentController)
 );
 export default router;

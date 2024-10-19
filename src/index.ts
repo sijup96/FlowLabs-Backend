@@ -3,7 +3,7 @@ import { createServer } from "./frameworks/Server/server";
 import Redis from "ioredis";
 const startServer = async () => {
   try {
-    const app = await createServer();
+     await createServer();
     await connectDatabase();
 
     const redis = new Redis();

@@ -27,15 +27,14 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
     this.companyRepository = companyRepository;
   }
   public async generateOtp(data: { email: string }): Promise<void> {
-    try {
-      const { email } = data;
-      const otpCode = generateOtpCode();
-      const otp = new OtpEntities(email, otpCode);
-      await this.otpRepository.saveOtp(otp);
-      await this.emailService.sendMail({
-        to: email,
-        subject: "Flow Labs OTP",
-        body: ` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+    const { email } = data;
+    const otpCode = generateOtpCode();
+    const otp = new OtpEntities(email, otpCode);
+    await this.otpRepository.saveOtp(otp);
+    await this.emailService.sendMail({
+      to: email,
+      subject: "Flow Labs OTP",
+      body: ` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
         <h2 style="color: #007BFF;">Verify Your Email</h2>
         <p>Please use the following OTP to verify your email:</p>
         <div style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
@@ -45,10 +44,7 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
         <p>If you did not request this verification, please ignore this email.</p>
         <P style="color: #007BFF;">From Flow Labs </p>
     </div>`,
-      });
-    } catch (error) {
-      throw error;
-    }
+    });
   }
   public async validateOtp(email: string, otpCode: string): Promise<boolean> {
     const otp = await this.otpRepository.verifyOtp(email, otpCode);
@@ -62,8 +58,8 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
     try {
       const { companyName, industry, phone, email, otp } = reqBody;
       const errorObject: { [key: string]: string } = {};
-      const defaultPassword = envConfig.DEFAULT_PASSWORD
-      if(!defaultPassword) throw new Error("Default Password error")
+      const defaultPassword = envConfig.DEFAULT_PASSWORD;
+      if (!defaultPassword) throw new Error("Default Password error");
 
       // Check for existing company
       const existingCompany = await this.companyRepository.isExistingCompany(
@@ -82,7 +78,7 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
       // Log errors and throw validation error if any
       if (Object.keys(errorObject).length > 0) {
         throw new CustomError("Validation Error", errorObject, 400);
-        return
+        return;
       }
       // Hash password
       const password = await bcrypt.hash(defaultPassword, 10);
@@ -97,12 +93,12 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
         password
       );
       // Save the new company
-       await this.companyRepository.save(companyData);
+      await this.companyRepository.save(companyData);
       // Send welcome email
       await this.emailService.sendMail({
         to: email,
         subject: "Welcome to FlowLabs! Your Login Link",
-        body: SIGNUP_EMAIL_BODY(companySlug),
+        body: SIGNUP_EMAIL_BODY(),
       });
     } catch (error) {
       console.log(error);
@@ -111,49 +107,45 @@ export class CompanySignUpUseCase implements ICompanySignUpUseCase {
   }
 
   async googleAuth(signUpData: ICompanyGoogleSignUp): Promise<void> {
-    try {
-      const { companyName, industry, phone, tokenResponse } = signUpData;
-      const errorObject: { [key: string]: string } = {};
-      const defaultPassword = envConfig.DEFAULT_PASSWORD
-      if(!defaultPassword) throw new Error('default Password error')
-      // Check for existing company
-      const existingCompany = await this.companyRepository.isExistingCompany(
-        companyName
-      );
-      if (existingCompany) {
-        errorObject.companyNameError = "Company already exists";
-      }
-      const userData = await this.googleService.verifyGoogleToken(
-        tokenResponse.access_token
-      );
-      const email = userData?.email || "";
-      const logo = userData?.picture;
-
-      if (Object.keys(errorObject).length > 0) {
-        throw new CustomError("Validation Error", errorObject, 400);
-      }
-      // Hash password
-      const password = await bcrypt.hash(defaultPassword, 10);
-      const companySlug = slugify(companyName, { lower: true });
-      const companyData = new CompanyEntity(
-        companyName,
-        companySlug,
-        industry,
-        phone,
-        email,
-        password,
-        logo
-      );
-      // Save the new company
-      const newCompany = await this.companyRepository.save(companyData);
-      // Send welcome email
-      await this.emailService.sendMail({
-        to: email,
-        subject: "Welcome to FlowLabs! Your Login Link",
-        body: SIGNUP_EMAIL_BODY("google"),
-      });
-    } catch (error) {
-      throw error;
+    const { companyName, industry, phone, tokenResponse } = signUpData;
+    const errorObject: { [key: string]: string } = {};
+    const defaultPassword = envConfig.DEFAULT_PASSWORD;
+    if (!defaultPassword) throw new Error("default Password error");
+    // Check for existing company
+    const existingCompany = await this.companyRepository.isExistingCompany(
+      companyName
+    );
+    if (existingCompany) {
+      errorObject.companyNameError = "Company already exists";
     }
+    const userData = await this.googleService.verifyGoogleToken(
+      tokenResponse.access_token
+    );
+    const email = userData?.email || "";
+    const logo = userData?.picture;
+
+    if (Object.keys(errorObject).length > 0) {
+      throw new CustomError("Validation Error", errorObject, 400);
+    }
+    // Hash password
+    const password = await bcrypt.hash(defaultPassword, 10);
+    const companySlug = slugify(companyName, { lower: true });
+    const companyData = new CompanyEntity(
+      companyName,
+      companySlug,
+      industry,
+      phone,
+      email,
+      password,
+      logo
+    );
+    // Save the new company
+    await this.companyRepository.save(companyData);
+    // Send welcome email
+    await this.emailService.sendMail({
+      to: email,
+      subject: "Welcome to FlowLabs! Your Login Link",
+      body: SIGNUP_EMAIL_BODY(),
+    });
   }
 }

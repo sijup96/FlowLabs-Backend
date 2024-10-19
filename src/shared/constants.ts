@@ -1,4 +1,4 @@
-export const SIGNUP_EMAIL_BODY = (domainName: string) => {
+export const SIGNUP_EMAIL_BODY = () => {
   return `
 <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <h2 style="color: #4CAF50;">Thank You for Joining FlowLabs!</h2>
@@ -68,6 +68,7 @@ export const COLLECTION_NAME = {
   company: "companydatas",
   employees:'employeedetails',
   admin: "credentials",
+  department:'departmentdetails'
 };
 export const TOKEN_NAME = {
   companyRefreshToken: "companyRefreshToken",

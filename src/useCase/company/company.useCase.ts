@@ -76,7 +76,6 @@ export class CompanyUseCase implements ICompanyUseCase {
     }
   }
   public async getCompanyInfo(user: IPayload): Promise<ICompanyDocument> {
-    try {
       if (!user.domainName) throw new Error("Domain Name is not found");
       const connection = await this.companyDbService.getConnection(
         user.domainName
@@ -88,9 +87,6 @@ export class CompanyUseCase implements ICompanyUseCase {
       );
       if (!companyData) throw new Error("company data not found");
       return companyData;
-    } catch (error) {
-      throw error;
-    }
   }
   public async updateCompanyInfo(
     body: ICompanyUpdateProps,
@@ -111,7 +107,6 @@ export class CompanyUseCase implements ICompanyUseCase {
     }
   }
   public async uploadLogo(file:Express.Multer.File,user:IPayload):Promise<void>{
-    try {
       if(!user.domainName) throw new CustomError('Domain name not found',{dbError:'No domain name'},400)
       const imageName=`logo-${user.domainName}`
       const contentType=file.mimetype
@@ -120,9 +115,5 @@ export class CompanyUseCase implements ICompanyUseCase {
       const connection=await this.companyDbService.getConnection(user.domainName)
       if(!connection) throw new CustomError('Connection Error',{},400)
       await this.companyRepository.updateCompanyLogo(connection,imageUrl,user)
-
-    } catch (error) {
-      throw error
-    }
   }
 }

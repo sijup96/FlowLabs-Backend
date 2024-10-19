@@ -12,7 +12,6 @@ export class AdminRequestsRepository {
     this.adminDbService = adminDbService;
   }
   public async getUnapprovedCompanies() {
-    try {
       const companies = await this.adminDbService.getAllCompanies();
       if (!companies) return null;
       const unapprovedCompanies: Record<string, unknown[]> = {};
@@ -26,12 +25,9 @@ export class AdminRequestsRepository {
       return Object.keys(unapprovedCompanies).length > 0
         ? unapprovedCompanies
         : null;
-    } catch (error) {
-      throw error;
-    }
+
   }
   public async requestApprovel(data: IRequestApprovelProps) {
-    try {
       const connection = await this.companyDbService.getConnection(
         data.companySlug
       );
@@ -43,7 +39,7 @@ export class AdminRequestsRepository {
       if (!companyData) throw new Error("Company data is not found");
       if (data.isApproved) {
         const updatedData = { $set: { isApproved: "approved" } };
-        const updated = await collection.updateOne(
+        await collection.updateOne(
           { companySlug: data.companySlug },
           updatedData
         );
@@ -64,8 +60,5 @@ export class AdminRequestsRepository {
           isApproved: false,
         };
       }
-    } catch (error) {
-      throw error;
-    }
   }
 }

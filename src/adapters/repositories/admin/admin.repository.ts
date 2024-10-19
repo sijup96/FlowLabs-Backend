@@ -12,7 +12,6 @@ export class AdminRepository implements IAdminRepository {
         this.adminDbService = adminDbService
     }
     public async verifyAdmin(email: string, password: string): Promise<{_id:string,email:string}> {
-        try {
             const connection = await this.adminDbService.getConnection();
             if (!connection) throw new Error('connection not getting')
             const adminCollection = connection.collection(this.collectionName)
@@ -20,8 +19,6 @@ export class AdminRepository implements IAdminRepository {
             if (!admin) throw new Error('Admin not found')
             if (password !== admin.password) throw new CustomError('Invalid Credentials',{},400)
             return {_id:admin._id.toString(),email:admin.email}
-        } catch (error) {
-            throw error
-        }
+
     }
 }

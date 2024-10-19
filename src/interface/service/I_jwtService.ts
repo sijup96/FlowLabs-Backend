@@ -2,7 +2,7 @@ export interface IPayload {
   userId: string;
   email: string;
   role: string;
-  domainName?:string
+  domainName:string
   iat?: number;
   exp?: number;
 }

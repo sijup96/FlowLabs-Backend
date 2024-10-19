@@ -50,8 +50,12 @@ export class CompanyController {
     }
   }
   public async getCompanyInfo(req: Request, res: Response, next: NextFunction) {
-    const companyData = await this.companyUseCase.getCompanyInfo(req.user as IPayload);
-    res.status(200).json({ companyData });
+try {
+  const companyData = await this.companyUseCase.getCompanyInfo(req.user as IPayload);
+  res.status(200).json({ companyData });
+} catch (error) {
+  next(error)
+}
   }
   public async updateCompanyInfo(
     req: Request,

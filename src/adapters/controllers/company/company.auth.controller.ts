@@ -1,13 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { ICompanySignUpUseCase } from "../../../interface/company/ICompany.signUp";
-import { ICompanyUseCase } from "../../../interface/company/ICompany.useCase";
 
 export class CompanyAuthController {
-  constructor(
-    private companySignUpUseCase: ICompanySignUpUseCase,
-  ) {}
+  constructor(private companySignUpUseCase: ICompanySignUpUseCase) {}
   public async generateOtp(
-    req: Request<{}, {}, { email: string }, {}>,
+    req: Request<object, object, { email: string }, object>,
     res: Response,
     next: NextFunction
   ): Promise<void> {

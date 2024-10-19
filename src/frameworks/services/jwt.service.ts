@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import { envConfig } from "../../shared/config/env.config";
 import { IJwtService, IPayload } from "../../interface/service/I_jwtService";
-import { CustomError } from "../../shared/utils/customError";
 
 export class JwtService implements IJwtService {
   public async generateRefreshToken(data: IPayload): Promise<string> {
