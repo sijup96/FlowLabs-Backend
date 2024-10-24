@@ -1,15 +1,15 @@
 import express from "express";
-import { CompanyUseCase } from "../../useCase/company/company.useCase";
-import { CompanyController } from "../../adapters/controllers/company/company.controller";
-import { CompanyDbService } from "../services/db.connection.service";
-import { CompanyRepository } from "../../adapters/repositories/company/company.repository";
-import { JwtService } from "../services/jwt.service";
-import { AuthMiddleware } from "../middleware/auth.middleware";
+import { CompanyUseCase } from "../../../useCase/company/company.useCase";
+import { CompanyController } from "../../../adapters/controllers/company/company.controller";
+import { CompanyDbService } from "../../services/db.connection.service";
+import { CompanyRepository } from "../../../adapters/repositories/company/company.repository";
+import { JwtService } from "../../services/jwt.service";
+import { AuthMiddleware } from "../../middleware/auth.middleware";
 import multer from "multer";
-import { AwsS3Bucket } from "../services/awsS3Service.service";
-import { DepartmentController } from "../../adapters/controllers/company/department.controller";
-import { DepartmentUseCase } from "../../useCase/company/department.useCase";
-import { DepartmentRepository } from "../../adapters/repositories/company/department.repository";
+import { AwsS3Bucket } from "../../services/awsS3Service.service";
+import { DepartmentController } from "../../../adapters/controllers/company/department.controller";
+import { DepartmentUseCase } from "../../../useCase/company/department.useCase";
+import { DepartmentRepository } from "../../../adapters/repositories/company/department.repository";
 
 const router = express.Router();
 // Multer
@@ -40,6 +40,7 @@ const companyController = new CompanyController(companyUseCase, jwtService);
 const departmentController = new DepartmentController(departmentUseCase);
 
 router.post("/login", companyController.login.bind(companyController));
+router.post('/logout', authMiddleware.isHR.bind(authMiddleware),companyController.logout.bind(companyController))
 router.put(
   "/resetPassword",
   authMiddleware.isHR.bind(authMiddleware),
@@ -84,4 +85,5 @@ router.put(
   authMiddleware.isHR.bind(authMiddleware),
   departmentController.updateDepartment.bind(departmentController)
 );
+router.get("/getActiveDepartment");
 export default router;

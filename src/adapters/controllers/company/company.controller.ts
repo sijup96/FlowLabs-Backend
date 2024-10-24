@@ -81,4 +81,13 @@ try {
       next(error)
     }
   }
+  async logout(req:Request,res:Response,next:NextFunction){
+    try {
+      res.clearCookie(TOKEN_NAME.hrAccessToken)
+      res.clearCookie(TOKEN_NAME.hrRefreshToken)
+      return res.status(200).json({message:'Logout successful'})
+    } catch (error) {
+      next(error)
+    }
+  }
 }

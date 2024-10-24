@@ -1,13 +1,25 @@
 import { ICompanyUpdateProps } from "../../interface/company/ICompany.useCase";
 
 export const validate={
+  fullName:(name:string)=>{
+    const nameRegex = /^[A-Za-z]{3,15}$/;
+    return nameRegex.test(name.trim())
+  },
   departmentName:(value:string)=>{
     const regex=/^[A-Za-z]{3,15}$/
     return regex.test(value)
   },
-  description:(value:string)=>{
-    const wordCount = value.split(' ').length;
-    return (wordCount < 3 || wordCount > 10) 
+  description: (description: string) => {
+    const countWords = (str: string) => {
+      return str.trim().split(/\s+/).length;
+    };
+    const wordCount = countWords(description);
+    if (wordCount < 3 || wordCount > 10) return false;
+    return true
+  },
+  projectDescription:(description:string)=>{
+    const descriptionRegex=/^[\w\s.,'"\-()?!]{10,500}$/
+    return descriptionRegex.test(description)
   }
 }
 

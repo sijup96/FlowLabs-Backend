@@ -4,10 +4,11 @@ import morgan from "morgan";
 import { envConfig } from "../../shared/config/env.config";
 import indexRouter from "../routes/index.router";
 import { errorHandler } from "../middleware/error.handler.middleware";
-import adminRouter from "../routes/admin.router";
+import adminRouter from "../routes/admin/admin.router";
 import cookieParser from "cookie-parser";
-import companyRouter from "../routes/company.router";
+import companyRouter from "../routes/company/company.router";
 import employeeRouter from "../routes/employee.router";
+import projectRouter from "../routes/company/project.router";
 
 export const createServer = async () => {
   try {
@@ -26,6 +27,7 @@ export const createServer = async () => {
     app.use("/", indexRouter);
     app.use("/admin", adminRouter);
     app.use("/company", companyRouter);
+    app.use("/company/project", projectRouter);
     app.use("/employee", employeeRouter);
     app.use(errorHandler);
     app.listen(envConfig.PORT, () =>

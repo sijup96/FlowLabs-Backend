@@ -22,7 +22,7 @@ export class DepartmentUseCase implements IDepartmentUseCase {
     const errorObject: { [key: string]: string } = {};
     if (!validate.departmentName(data.departmentName))
       errorObject.departmentNameError = "Invalid department name";
-    if (validate.description(data.description))
+    if (!validate.description(data.description))
       errorObject.descriptionError = "Invalid description";
     if (Object.keys(errorObject).length > 0) {
       throw new CustomError("Validation Error", errorObject, 400);
@@ -102,11 +102,19 @@ export class DepartmentUseCase implements IDepartmentUseCase {
         { departmentNameError: "Name already exist." },
         400
       );
-      const data={
-        departmentName:body.departmentName,
-        description:body.description,
-        status:body.status
-      }
-      await this.departmentRepository.findByIdAndUpdate(connection,id,data)
+    const data = {
+      departmentName: body.departmentName,
+      description: body.description,
+      status: body.status,
+    };
+    await this.departmentRepository.findByIdAndUpdate(connection, id, data);
+  }
+  // Get Active Department
+  async findActiveDepartment(user: IPayload): Promise<IDepartmentDocument[]> {
+    const connection = await this.companyDbService.getConnection(
+      user.domainName
+    );
+    if (!connection) throw new CustomError("Connection Error", {}, 500);
+    return await this.departmentRepository.findActive(connection);
   }
 }

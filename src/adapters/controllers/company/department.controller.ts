@@ -50,4 +50,12 @@ export class DepartmentController {
       next(error);
     }
   }
+  async getActiveDepartmets(req:Request,res:Response,next:NextFunction){
+    try {
+      const data=await this.departmentUseCase.findActiveDepartment(req.user as IPayload)
+      res.status(200).json({data})
+    } catch (error) {
+    next(error)
+    }
+  }
 }

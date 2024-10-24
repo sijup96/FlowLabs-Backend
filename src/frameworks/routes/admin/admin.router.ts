@@ -1,15 +1,15 @@
 import express from "express";
-import { AdminAuthController } from "../../adapters/controllers/admin/admin.auth.controller";
+import { AdminAuthController } from "../../../adapters/controllers/admin/admin.auth.controller";
 import {
   AdminDbService,
   CompanyDbService,
-} from "../services/db.connection.service";
-import { AdminRepository } from "../../adapters/repositories/admin/admin.repository";
-import { AdminUseCase } from "../../useCase/admin/admin.useCase";
-import { JwtService } from "../services/jwt.service";
-import { AdminRequestsRepository } from "../../adapters/repositories/admin/admin.requests.repository";
-import { EmailService } from "../services/email.service";
-import { AuthMiddleware } from "../middleware/auth.middleware";
+} from "../../services/db.connection.service";
+import { AdminRepository } from "../../../adapters/repositories/admin/admin.repository";
+import { AdminUseCase } from "../../../useCase/admin/admin.useCase";
+import { JwtService } from "../../services/jwt.service";
+import { AdminRequestsRepository } from "../../../adapters/repositories/admin/admin.requests.repository";
+import { EmailService } from "../../services/email.service";
+import { AuthMiddleware } from "../../middleware/auth.middleware";
 
 const router = express.Router();
 // Service

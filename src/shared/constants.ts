@@ -68,7 +68,8 @@ export const COLLECTION_NAME = {
   company: "companydatas",
   employees:'employeedetails',
   admin: "credentials",
-  department:'departmentdetails'
+  department:'departmentdetails',
+  project:'projects'
 };
 export const TOKEN_NAME = {
   companyRefreshToken: "companyRefreshToken",

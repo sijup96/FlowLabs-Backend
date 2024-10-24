@@ -31,6 +31,7 @@ export interface IDepartmentRepository {
     id: string,
     data: IDepartmentProps
   ): Promise<void>;
+  findActive(connection: Connection): Promise<IDepartmentDocument[]>;
 }
 
 // UseCase
@@ -43,4 +44,5 @@ export interface IDepartmentUseCase {
     body: IDepartmentProps,
     user: IPayload
   ): Promise<void>;
+  findActiveDepartment(user: IPayload): Promise<IDepartmentDocument[]>;
 }

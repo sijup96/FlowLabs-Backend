@@ -45,7 +45,11 @@ export class DepartmentRepository implements IDepartmentRepository {
   ): Promise<void> {
     const collection = connection.collection(COLLECTION_NAME.department);
     const objectId = new ObjectId(id);
-    console.log(data)
     await collection.findOneAndUpdate({ _id: objectId }, { $set: data });
+  }
+  async findActive(connection: Connection): Promise<IDepartmentDocument[]> {
+    const collection = connection.collection(COLLECTION_NAME.department);
+    const data = await collection.find({ status: "Active" }).toArray();
+    return data as unknown as IDepartmentDocument[];
   }
 }
